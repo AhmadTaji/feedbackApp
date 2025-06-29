@@ -11,7 +11,7 @@ export async function POST(req) {
     }
 
     const client = await clientPromise;
-    const db = client.db('feedback-db'); // Replace with your actual DB name
+    const db = client.db('classroom-feedback-db'); // Replace with your actual DB name
 
     const existingUser = await db.collection('users').findOne({ email });
     if (existingUser) {

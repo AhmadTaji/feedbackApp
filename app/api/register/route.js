@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { MongoClient } from 'mongodb';
+import clientPromise from "../../../lib/mongodb"; // Adjust the path if needed
 import bcrypt from 'bcrypt';
-
-const uri = process.env.MONGODB_URI;
 
 export async function POST(req) {
   try {
@@ -12,12 +10,11 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const client = await MongoClient.connect(uri);
-    const db = client.db('yourDatabaseName');
+    const client = await clientPromise;
+    const db = client.db('feedback-db'); // Replace with your actual DB name
 
     const existingUser = await db.collection('users').findOne({ email });
     if (existingUser) {
-      client.close();
       return NextResponse.json({ message: 'User already exists' }, { status: 409 });
     }
 
@@ -28,7 +25,6 @@ export async function POST(req) {
       password: hashedPassword,
     });
 
-    client.close();
     return NextResponse.json({ message: 'User registered successfully' }, { status: 201 });
   } catch (error) {
     console.error('Registration error:', error);
